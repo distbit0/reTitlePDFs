@@ -19,7 +19,6 @@ def getPDFTitle(pdfPath):
 def reTitlePDF(pdfPath):
     pdfTitle = getPDFTitle(pdfPath)
     newPath = "/".join(pdfPath.split("/")[:-1]) + "/" + pdfTitle
-    print(pdfPath + "\n" + newPath + "\n\n")
     os.rename(pdfPath, newPath)
     return
 

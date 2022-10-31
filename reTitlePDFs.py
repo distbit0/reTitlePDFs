@@ -13,6 +13,8 @@ def getPDFTitle(pdfPath):
     else:
         pdfTitle = pdfTitle.strip()
         pdfTitle += ".pdf"
+
+    pdfTitle = pdfTitle.replace(":", "").replace("\n", "")
     return pdfTitle
 
 

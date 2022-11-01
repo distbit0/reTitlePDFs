@@ -2,6 +2,7 @@ import utils
 from utils import getConfig
 import os
 import glob
+import shutil
 
 
 def getPDFTitle(pdfPath):
@@ -25,11 +26,20 @@ def reTitlePDF(pdfPath):
     return
 
 
+def getDocsInFolder(folderPath, formats=["pdf"]):
+    docPaths = []
+    for filePath in glob.glob(folderPath + "/*", recursive=True):
+        isDoc = filePath.lower()[-3:] in formats
+        if isDoc:
+            docPaths.append(filePath)
+
+    return docPaths
+
+
 def retitlePDFsInFolder(folderPath):
-    for pdfPath in glob.glob(folderPath + "**/*", recursive=True):
-        isPdf = pdfPath.lower()[-4:] == ".pdf"
-        if isPdf:
-            reTitlePDF(pdfPath)
+    pdfPaths = getDocsInFolder(folderPath, formats=["pdf"])
+    for pdfPath in pdfPaths:
+        reTitlePDF(pdfPath)
 
 
 def retitleAllPDFs():
@@ -40,5 +50,19 @@ def retitleAllPDFs():
     return
 
 
+def moveDocsToTargetFolder():
+    docPaths = []
+    PDFFolders = getConfig()["PDFFolders"]
+    docFormatsToMove = getConfig()["docFormatsToMove"]
+    targetFolder = getConfig()["targetFolder"]
+    for folderPath in PDFFolders:
+        docPaths += getDocsInFolder(folderPath, formats=docFormatsToMove)
+
+    for docPath in docPaths:
+        docName = docPath.split("/")[-1]
+        shutil.move(docPath, targetFolder + "/" + docName)
+
+
 if __name__ == "__main__":
     retitleAllPDFs()
+    moveDocsToTargetFolder()

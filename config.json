@@ -1,3 +1,6 @@
 {
-    "PDFFolders": ["/home/pimania/Downloads", "/home/pimania/Syncs/Downloads"]
+    "PDFFolders": ["/home/pimania/Downloads", "/home/pimania/Syncs/Downloads"],
+    "moveAllDocsToTargetFolder": true,
+    "docFormatsToMove": ["pdf", "epub", "mobi"],
+    "targetFolder": "/home/pimania/Syncs/Downloads/unorganisedDocs"
 }

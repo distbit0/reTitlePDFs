@@ -5,6 +5,14 @@ import glob
 import shutil
 
 
+def removeIllegalChars(pdfTitle):
+    illegalChars = getConfig()["illegalFileNameChars"]
+    for char in illegalChars:
+        pdfTitle = pdfTitle.replace(char, "")
+
+    return pdfTitle
+
+
 def getPDFTitle(pdfPath):
     pdfTitle = ""
     originalFileName = pdfPath.split("/")[-1]
@@ -15,7 +23,7 @@ def getPDFTitle(pdfPath):
         pdfTitle = pdfTitle.strip()
         pdfTitle += ".pdf"
 
-    pdfTitle = pdfTitle.replace(":", "").replace("\n", "")
+    pdfTitle = removeIllegalChars(pdfTitle)
     return pdfTitle
 
 

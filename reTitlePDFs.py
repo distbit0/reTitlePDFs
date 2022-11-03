@@ -37,7 +37,9 @@ def reTitlePDF(pdfPath):
 def getDocsInFolder(folderPath, formats=["pdf"]):
     docPaths = []
     for filePath in glob.glob(folderPath + "/*", recursive=True):
-        isDoc = filePath.lower()[-3:] in formats
+        if "." not in filePath:
+            continue
+        isDoc = filePath.lower().split(".")[-1] in formats
         if isDoc:
             docPaths.append(filePath)
 

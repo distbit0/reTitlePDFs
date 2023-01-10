@@ -17,11 +17,17 @@ def getPDFTitle(pdfPath):
     pdfTitle = ""
     originalFileName = pdfPath.split("/")[-1]
     pdfTitle = os.popen('pdftitle -p "' + pdfPath + '"').read()
-    if not pdfTitle:
-        pdfTitle = originalFileName
+    if (not pdfTitle) or len(pdfTitle) < 4:
+        pdfTitle = originalFileName[:-4]
+        idType = utils.get_id_type(pdfTitle)
+        if idType == "arxiv":
+            pdfTitle = utils.getArxivTitle(pdfTitle)
+        elif idType == "doi":
+            pdfTitle = utils.getDOITitle(pdfTitle)
     else:
         pdfTitle = pdfTitle.strip()
-        pdfTitle += ".pdf"
+
+    pdfTitle += ".pdf"
 
     pdfTitle = removeIllegalChars(pdfTitle)
     return pdfTitle
@@ -30,8 +36,8 @@ def getPDFTitle(pdfPath):
 def reTitlePDF(pdfPath):
     pdfTitle = getPDFTitle(pdfPath)
     newPath = "/".join(pdfPath.split("/")[:-1]) + "/" + pdfTitle
-    os.rename(pdfPath, newPath)
-    return
+    print(newPath, pdfPath)
+    return newPath
 
 
 def getDocsInFolder(folderPath, formats=["pdf"]):
@@ -48,8 +54,14 @@ def getDocsInFolder(folderPath, formats=["pdf"]):
 
 def retitlePDFsInFolder(folderPath):
     pdfPaths = getDocsInFolder(folderPath, formats=["pdf"])
+    newPdfPaths = []
     for pdfPath in pdfPaths:
-        reTitlePDF(pdfPath)
+        if pdfPath[-4:] != ".pdf":
+            continue
+        newPath = reTitlePDF(pdfPath).lstrip(".")
+        if newPath not in newPdfPaths:
+            newPdfPaths.append(newPath)
+            os.rename(pdfPath, newPath)
 
 
 def retitleAllPDFs():
@@ -68,8 +80,10 @@ def moveDocsToTargetFolder():
     for folderPath in PDFFolders:
         docPaths += getDocsInFolder(folderPath, formats=docFormatsToMove)
 
+    print("LEN OF docPath", len(docPaths))
     for docPath in docPaths:
         docName = docPath.split("/")[-1]
+        print("Moving", docName, "to", targetFolder, " derived from", docPath)
         shutil.move(docPath, targetFolder + "/" + docName)
 
 
